@@ -1,20 +1,13 @@
-import 'dart:convert';
-
 class FingerprintsEntity {
-  final int Score;
-  double? Offset;
-  final String SongID;
+  final double score;
+  final double offsetSeconds;
+  final String songId;
+  final String confidence;
 
-  FingerprintsEntity({
-    required this.Score,
-    required this.SongID,
-    this.Offset,
+  const FingerprintsEntity({
+    required this.score,
+    required this.offsetSeconds,
+    required this.songId,
+    required this.confidence,
   });
-
-  String toJson() => jsonEncode({
-    'Score': Score,
-    'Offset': Offset,
-    'SongID': SongID,
-  });
-  
 }

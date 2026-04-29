@@ -1,27 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get_it/get_it.dart';
 import 'package:soundsalike/constants/router_config.dart';
 import 'package:soundsalike/features/recording/presentation/bloc/record_bloc.dart';
 import 'package:soundsalike/services/dependency_injection.dart';
 
-final GetIt getIt = GetIt.instance;
 void main() async {
-  dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
-
+  // Load .env before anything else — API_URL must be available at startup
+  await dotenv.load(fileName: '.env');
   dependencyInjection();
-
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => getIt<RecordBloc>())],
-      child: MaterialApp.router(routerConfig: createRouter()),
+      providers: [
+        BlocProvider(create: (_) => getIt<RecordBloc>()),
+      ],
+      child: MaterialApp.router(
+        title: 'SoundsAlike',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF12827A),
+            brightness: Brightness.dark,
+          ),
+          useMaterial3: true,
+        ),
+        routerConfig: createRouter(),
+      ),
     );
   }
 }

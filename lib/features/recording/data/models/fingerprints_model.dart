@@ -1,17 +1,21 @@
-import 'dart:convert';
-
 import 'package:soundsalike/features/recording/domain/entities/fingerprints_entity.dart';
 
 class FingerprintModel extends FingerprintsEntity {
-  FingerprintModel({super.Offset, required super.Score, required super.SongID});
+  const FingerprintModel({
+    required super.score,
+    required super.offsetSeconds,
+    required super.songId,
+    required super.confidence,
+  });
 
-  String toJson() =>
-      jsonEncode({'SongID': SongID, 'Offset': Offset, 'Score': Score});
+  // Backend now returns snake_case keys and confidence field:
+  // { "song_id": "...", "score": 32.0, "offset_seconds": 12.5, "confidence": "high" }
   factory FingerprintModel.fromJson(Map<String, dynamic> json) {
     return FingerprintModel(
-      Score: json['Score'],
-      SongID: json['SongID'],
-      Offset: json['Offset'].toDouble(),
+      songId: json['song_id'] as String,
+      score: (json['score'] as num).toDouble(),
+      offsetSeconds: (json['offset_seconds'] as num? ?? 0).toDouble(),
+      confidence: json['confidence'] as String? ?? 'low',
     );
   }
 }

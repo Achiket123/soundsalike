@@ -4,18 +4,22 @@ import 'package:soundsalike/features/recording/data/datasources/recording_data_s
 import 'package:soundsalike/features/recording/data/repo/recording_repo_impl.dart';
 import 'package:soundsalike/features/recording/domain/repo/recording_repo.dart';
 import 'package:soundsalike/features/recording/presentation/bloc/record_bloc.dart';
-import 'package:soundsalike/main.dart';
 
 final getIt = GetIt.instance;
+
 void dependencyInjection() {
   getIt.registerLazySingleton<RecordingDataSource>(
     () => RecordingDataSourceImpl(),
   );
+
   getIt.registerLazySingleton<RecordingRepo>(
     () => RecordingRepoImpl(recordingDataSource: getIt<RecordingDataSource>()),
   );
 
-  getIt.registerCachedFactory(() => AudioRecorder());
+  // AudioRecorder must be a singleton — creating multiple instances can
+  // cause platform channel conflicts on Android/iOS.
+  getIt.registerLazySingleton<AudioRecorder>(() => AudioRecorder());
+
   getIt.registerFactory<RecordBloc>(
     () => RecordBloc(
       recordingRepo: getIt<RecordingRepo>(),
